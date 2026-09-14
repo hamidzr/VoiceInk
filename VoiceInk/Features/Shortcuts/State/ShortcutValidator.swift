@@ -116,12 +116,7 @@ enum ShortcutValidator {
     }
 
     private static var reservedRecorderPanelShortcuts: [(ShortcutAction, Shortcut)] {
-        digitKeyCodes.enumerated().map { index, keyCode in
-            (
-                ShortcutAction.recorderPanelMode(index),
-                Shortcut.key(keyCode: keyCode, modifierFlags: [.option])
-            )
-        }
+        []
     }
 
     private static var systemReservedShortcuts: [Shortcut] {
@@ -242,18 +237,5 @@ enum ShortcutValidator {
         UInt16(kVK_ANSI_KeypadMinus),
         UInt16(kVK_ANSI_KeypadPlus),
         UInt16(kVK_ANSI_KeypadEquals),
-    ]
-
-    private static let digitKeyCodes: [UInt16] = [
-        UInt16(kVK_ANSI_1),
-        UInt16(kVK_ANSI_2),
-        UInt16(kVK_ANSI_3),
-        UInt16(kVK_ANSI_4),
-        UInt16(kVK_ANSI_5),
-        UInt16(kVK_ANSI_6),
-        UInt16(kVK_ANSI_7),
-        UInt16(kVK_ANSI_8),
-        UInt16(kVK_ANSI_9),
-        UInt16(kVK_ANSI_0),
     ]
 }

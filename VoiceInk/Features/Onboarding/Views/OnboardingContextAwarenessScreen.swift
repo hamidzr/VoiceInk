@@ -75,7 +75,7 @@ private struct OnboardingContextAwarenessContent: View {
     }
 
     private var optionSwitchingText: some View {
-        Text("Note: Press Option 1-9 during recording to switch modes manually.")
+        Text("Note: You can switch modes from the recorder panel during recording.")
             .font(.system(size: 13, weight: .medium))
             .foregroundColor(AppTheme.Text.secondary)
             .multilineTextAlignment(.center)

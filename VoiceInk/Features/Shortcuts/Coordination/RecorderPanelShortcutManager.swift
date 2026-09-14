@@ -61,10 +61,6 @@ final class RecorderPanelShortcutManager: ObservableObject {
         }
     }
 
-    private var canUseModeShortcuts: Bool {
-        !ModeManager.shared.enabledConfigurations.isEmpty
-    }
-
     private func resetEscapeState() {
         firstEscapePressTime = nil
         activeEscapePressID = nil
@@ -90,15 +86,6 @@ final class RecorderPanelShortcutManager: ObservableObject {
             shortcuts[.recorderPanelEscape] = .key(keyCode: UInt16(kVK_Escape), modifierFlags: [])
         }
 
-        if canUseModeShortcuts {
-            for (index, keyCode) in Self.digitKeyCodes.enumerated() {
-                shortcuts[.recorderPanelMode(index)] = .key(
-                    keyCode: keyCode,
-                    modifierFlags: [.option]
-                )
-            }
-        }
-
         visibleRecorderMonitor.start(
             shortcuts: shortcuts,
             onShortcutDown: { [weak self] action, _ in
@@ -119,8 +106,6 @@ final class RecorderPanelShortcutManager: ObservableObject {
             await recorderUIManager.cancelRecording()
         case .recorderPanelEscape:
             await handleEscapeShortcut()
-        case .recorderPanelMode(let index):
-            handleModeSelectionShortcut(index: index)
         default:
             break
         }
@@ -174,18 +159,6 @@ final class RecorderPanelShortcutManager: ObservableObject {
         )
     }
 
-    private func handleModeSelectionShortcut(index: Int) {
-        guard canUseModeShortcuts else { return }
-
-        let modeManager = ModeManager.shared
-        let availableConfigurations = modeManager.enabledConfigurations
-
-        guard index < availableConfigurations.count else { return }
-
-        let selectedConfig = availableConfigurations[index]
-        modeManager.setActiveConfiguration(selectedConfig)
-    }
-
     deinit {
         if let shortcutChangeObserver {
             NotificationCenter.default.removeObserver(shortcutChangeObserver)
@@ -197,17 +170,4 @@ final class RecorderPanelShortcutManager: ObservableObject {
             resetEscapeState()
         }
     }
-
-    private static let digitKeyCodes: [UInt16] = [
-        UInt16(kVK_ANSI_1),
-        UInt16(kVK_ANSI_2),
-        UInt16(kVK_ANSI_3),
-        UInt16(kVK_ANSI_4),
-        UInt16(kVK_ANSI_5),
-        UInt16(kVK_ANSI_6),
-        UInt16(kVK_ANSI_7),
-        UInt16(kVK_ANSI_8),
-        UInt16(kVK_ANSI_9),
-        UInt16(kVK_ANSI_0),
-    ]
 }

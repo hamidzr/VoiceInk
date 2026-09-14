@@ -5,9 +5,6 @@ struct ModeSettingsPanelView: View {
     @ObservedObject var modeManager: ModeManager
     let onDismiss: () -> Void
 
-    @AppStorage("ModeTipDismissed")
-    private var isTipDismissed = false
-
     private let contentInset: CGFloat = 20
 
     var body: some View {
@@ -49,21 +46,8 @@ struct ModeSettingsPanelView: View {
 
             ModeReorderList(modeManager: modeManager)
                 .padding(.horizontal, contentInset)
-
-            if !isTipDismissed {
-                ModeSettingsQuickSwitchTip {
-                    withAnimation(.easeInOut(duration: 0.16)) {
-                        isTipDismissed = true
-                    }
-                }
-                .padding(.horizontal, contentInset)
-                .padding(.top, 12)
-                .padding(.bottom, 16)
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
-            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .animation(.easeInOut(duration: 0.16), value: isTipDismissed)
         .onExitCommand(perform: onDismiss)
     }
 
