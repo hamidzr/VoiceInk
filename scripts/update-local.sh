@@ -29,12 +29,12 @@ git merge --ff-only "origin/$current_branch"
 git fetch upstream main
 git merge --no-edit upstream/main
 
-if ! xcrun --find metal >/dev/null 2>&1; then
+if ! xcrun metal --version >/dev/null 2>&1; then
   echo "Installing required Xcode Metal toolchain..."
   xcodebuild -downloadComponent MetalToolchain
 fi
 
-make local LOCAL_CODESIGN_IDENTITY="${LOCAL_CODESIGN_IDENTITY:--}"
+make local
 
 printf 'Installing %s...\n' "$install_path"
 osascript -e 'tell application "VoiceInk" to quit' 2>/dev/null || true
