@@ -17,6 +17,13 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
         static let sparkleAutomaticChecks = "SUEnableAutomaticChecks"
     }
 
+    // local fork builds update via scripts/update-local.sh; the upstream feed would replace them
+    #if LOCAL_BUILD
+        static let isEnabled = false
+    #else
+        static let isEnabled = true
+    #endif
+
     private let defaults: UserDefaults
     private var isUserInitiatedUpdateCheck = false
     private lazy var updaterController = SPUStandardUpdaterController(
@@ -32,8 +39,11 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     override init() {
         let defaults = UserDefaults.standard
         self.defaults = defaults
-        checksForUpdatesWhenDashboardAppears = Self.initialAutomaticCheckPreference(in: defaults)
+        checksForUpdatesWhenDashboardAppears =
+            Self.isEnabled && Self.initialAutomaticCheckPreference(in: defaults)
         super.init()
+
+        guard Self.isEnabled else { return }
 
         let updater = updaterController.updater
 
@@ -121,6 +131,7 @@ final class UpdaterViewModel: NSObject, ObservableObject, SPUUpdaterDelegate {
     }
 
     private func checkForUpdateInformationIfPossible() {
+        guard Self.isEnabled else { return }
         let updater = updaterController.updater
         guard !updater.sessionInProgress else { return }
         updater.checkForUpdateInformation()
@@ -156,7 +167,9 @@ struct CheckForUpdatesView: View {
     @ObservedObject var updaterViewModel: UpdaterViewModel
 
     var body: some View {
-        Button("Check for Updates…", action: updaterViewModel.checkForUpdates)
-            .disabled(!updaterViewModel.canCheckForUpdates)
+        if UpdaterViewModel.isEnabled {
+            Button("Check for Updates…", action: updaterViewModel.checkForUpdates)
+                .disabled(!updaterViewModel.canCheckForUpdates)
+        }
     }
 }
